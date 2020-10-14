@@ -1,4 +1,3 @@
-const Joi = require('joi');
 const express = require("express");
 const app = express();
 
@@ -15,23 +14,21 @@ app.get('/api/categories', (req, res) => {
 });
 
 app.get('/api/categories/create', (req, res) => {
-    const schema = {
-        name: Joi.string().required,
-        description: Joi.string().required
-    }
-    const queryObj = req.query;
-    const result = Joi.validate(queryObj, schema);
-    if(result.error){
-        res.status(400).send(result.error.details[0].message);
+    
+    const {name, description} = req.query;
+    if(!name || !description){
+        res.status(400).json({ errors: 'name is required, description is required'});
+
         return;
     }
 
     const category = {
-        id: categories.length + 1,
-        name: queryObj.name,
-        description: queryObj.description
-    }
+        id: categories.length+1,
+        name,
+        description
+    };
     categories.push(category);
+
     res.status(200).send(category);
 });
 
